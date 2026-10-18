@@ -186,7 +186,12 @@ pub fn streams(
     epoch: u64,
     access: u64,
 ) -> Result<std::thread::JoinHandle<()>> {
-    spawn("console-stream-admit", move || {
+    let name = if access == stream::ACCESS_READ {
+        "console-input-admit"
+    } else {
+        "console-output-admit"
+    };
+    spawn(name, move || {
         let listener = CapabilityChannel::from_handle(listener);
         while generation.load(Ordering::Acquire) == epoch {
             let deadline = match hyper_os::time::deadline_after(Duration::from_millis(100)) {
