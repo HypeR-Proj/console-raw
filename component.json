@@ -30,5 +30,22 @@
       "app-test",
       "APP_TEST_PACKAGE=hyper-console-raw-system"
     ]
-  ]
+  ],
+  "cargo_context": {
+    "Cargo.toml": {
+      "workspace": null,
+      "membership": "../../app",
+      "dependency_paths": {
+        "/dependencies/hyper-service": "lib/service"
+      },
+      "inherited_dependencies": {
+        "/dependencies/hyper-os": {
+          "workspace": true
+        },
+        "/dependencies/hyper-service": {
+          "workspace": true
+        }
+      }
+    }
+  }
 }
