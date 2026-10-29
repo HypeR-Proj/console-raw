@@ -1,0 +1,10 @@
+# SPDX-FileCopyrightText: 2026 roolrz
+# SPDX-License-Identifier: Apache-2.0
+
+config SYSTEM_APP_CONSOLE_RAW_SYSTEM
+    bool "console-raw-system (/svc/console-raw)"
+    default y
+    depends on SYSTEM_APP_COMPONENT_MANAGER
+    help
+        Build and deploy hyper-console-raw-system at /svc/console-raw.
+

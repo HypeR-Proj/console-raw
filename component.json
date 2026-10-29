@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "name": "console-raw",
+  "kind": "service",
+  "origin": {
+    "repository": "https://github.com/roolrz/HypeR",
+    "commit": "8d42d047058a2b58a291803700e86487fb723f7a"
+  },
+  "sources": {
+    "Cargo.toml": "svc/console-raw/Cargo.toml",
+    "component.mk": "svc/console-raw/component.mk",
+    "src/admission.rs": "svc/console-raw/src/admission.rs",
+    "src/lib.rs": "svc/console-raw/src/lib.rs",
+    "src/log.rs": "svc/console-raw/src/log.rs",
+    "src/log_buffer.rs": "svc/console-raw/src/log_buffer.rs",
+    "src/main.rs": "svc/console-raw/src/main.rs",
+    "src/session.rs": "svc/console-raw/src/session.rs"
+  },
+  "SPDX-FileCopyrightText": "2026 roolrz",
+  "SPDX-License-Identifier": "Apache-2.0",
+  "mounts": {
+    "": "svc/console-raw"
+  },
+  "packages": [
+    "hyper-console-raw-system"
+  ],
+  "tests": [
+    [
+      "make",
+      "app-test",
+      "APP_TEST_PACKAGE=hyper-console-raw-system"
+    ]
+  ]
+}
