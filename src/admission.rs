@@ -210,14 +210,12 @@ pub fn streams(
                 }
                 // Rejected rendezvous completes the receiver too. A malformed
                 // client must not close the shared connector for later clients.
-                Err(Error::Status(
-                    Status::TIMED_OUT
-                    | Status::INVALID_ARGUMENT
-                    | Status::BAD_HANDLE
-                    | Status::ACCESS_DENIED,
-                ))
+                Err(Error::Status(Status::TIMED_OUT))
+                | Err(Error::ReceiveRejected(hyper_os::ReceiveRejection::Status(
+                    Status::INVALID_ARGUMENT | Status::BAD_HANDLE | Status::ACCESS_DENIED,
+                )))
+                | Err(Error::ReceiveRejected(hyper_os::ReceiveRejection::Capacity { .. }))
                 | Err(Error::InvalidResponse)
-                | Err(Error::MessageTooLarge { .. })
                 | Err(Error::UnexpectedObjectKind { .. }) => {}
                 Err(_) => return,
             }
