@@ -85,7 +85,12 @@ pub fn control(listener: CapabilityChannel, sender: Sender) -> Result<()> {
             let message =
                 match listener.receive(hyper_os::DEADLINE_INFINITE, &mut bytes, &mut slots) {
                     Ok(message) => message,
-                    Err(_) => return,
+                    Err(Error::ReceiveRejected(_)) => continue,
+                    Err(Error::Status(Status::PEER_CLOSED)) => return,
+                    Err(error) => {
+                        eprintln!("console control listener stopped: {error}");
+                        return;
+                    }
                 };
             if message.bytes().len() != contract::CONTROL_BYTES
                 || message.bytes()[..4] != contract::CONTROL_MAGIC
@@ -151,8 +156,12 @@ pub fn logs(
             )];
             let message = match listener.receive(deadline, &mut bytes, &mut slots) {
                 Ok(message) => message,
-                Err(Error::Status(Status::TIMED_OUT)) => continue,
-                Err(_) => break,
+                Err(Error::Status(Status::TIMED_OUT)) | Err(Error::ReceiveRejected(_)) => continue,
+                Err(Error::Status(Status::PEER_CLOSED)) => break,
+                Err(error) => {
+                    eprintln!("console log listener stopped: {error}");
+                    break;
+                }
             };
             if message.bytes().len() <= 4
                 || message.bytes()[..4] != contract::LOG_MAGIC
@@ -211,13 +220,13 @@ pub fn streams(
                 // Rejected rendezvous completes the receiver too. A malformed
                 // client must not close the shared connector for later clients.
                 Err(Error::Status(Status::TIMED_OUT))
-                | Err(Error::ReceiveRejected(hyper_os::ReceiveRejection::Status(
-                    Status::INVALID_ARGUMENT | Status::BAD_HANDLE | Status::ACCESS_DENIED,
-                )))
-                | Err(Error::ReceiveRejected(hyper_os::ReceiveRejection::Capacity { .. }))
-                | Err(Error::InvalidResponse)
-                | Err(Error::UnexpectedObjectKind { .. }) => {}
-                Err(_) => return,
+                | Err(Error::ReceiveRejected(_))
+                | Err(Error::InvalidStreamRequest) => {}
+                Err(Error::Status(Status::PEER_CLOSED)) => return,
+                Err(error) => {
+                    eprintln!("console stream listener stopped: {error}");
+                    return;
+                }
             }
         }
     })
