@@ -18,3 +18,10 @@ python3 project.py test console-raw
 
 Paths in the documentation are relative to the repo-managed workspace root.
 Edit this repository and prepare the workspace again before building.
+
+## Admission failures
+
+Control, log and stream listeners discard matched transfer rejections and malformed
+peer requests. Stream protocol refusals use `InvalidStreamRequest`; trusted SDK
+`InvalidResponse` failures are diagnosed and stop the affected listener. Finite
+wait timeouts allow generation/stop checks. Existing sessions keep their owners.
